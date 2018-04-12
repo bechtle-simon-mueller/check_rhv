@@ -1,13 +1,13 @@
-Name:		nagios-plugins-rhev3
-Version:	1.6
+Name:		nagios-plugins-rhv
+Version:	2.0
 Release:	1%{?dist}
-Summary:	RHEV monitoring plugin for Nagios/Icinga
+Summary:	RHV monitoring plugin for Nagios/Icinga
 
 Group:		Applications/System
 License:	GPLv2+
-URL:		https://github.com/ovido/check_rhev3
-Source0:	check_rhev3-%{version}.tar.gz
-BuildRoot:	%{_tmppath}/check_rhev3-%{version}-%{release}-root
+URL:		https://github.com/rk-it-at/check_rhv
+Source0:	check_rhv-%{version}.tar.gz
+BuildRoot:	%{_tmppath}/check_rhv-%{version}-%{release}-root
 
 BuildRequires:	perl-Crypt-SSLeay
 BuildRequires:	perl-libwww-perl
@@ -19,11 +19,11 @@ Requires:	perl-XML-Simple
 
 %description
 This plugin for Icinga/Nagios is used to monitor a variety of
-a RHEV environement including datacenters, clusters, hosts,
+a RHV environement including datacenters, clusters, hosts,
 vms, vm pools and storage domains.
 
 %prep
-%setup -q -n check_rhev3-%{version}
+%setup -q -n check_rhv-%{version}
 
 %build
 %configure --prefix=%{_libdir}/nagios/plugins \
@@ -44,13 +44,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(0755,nagios,nagios)
-%{_libdir}/nagios/plugins/check_rhev3
-%{_datadir}/nagios/html/pnp4nagios/templates/check_rhev3.php
+%{_libdir}/nagios/plugins/check_rhv
+%{_datadir}/nagios/html/pnp4nagios/templates/check_rhv.php
 %doc README INSTALL NEWS ChangeLog COPYING
 
 
 
 %changelog
+* Thu Apr 20 2018 Rene Koch <rkoch@rk-it.at> 2.0-1
+- Initial build of renamed package nagios-plugins-rhv
+
 * Sun Nov 06 2016 Rene Koch <rkoch@rk-it.at> 1.6-1
 - Initial build
 
