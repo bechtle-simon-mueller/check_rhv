@@ -718,21 +718,15 @@ sub check_status {
              $sub = "vmpool" if $searchid eq "vmpool";
           print "[D] check_status: Variable \$sub: $sub.\n" if $o_verbose == 3;
           if ($components eq "networks") { 
-#            print "[V] Status: Value of $value: $result{$key}{$value}{status}{state}.\n" if $o_verbose >= 2;
             print "[V] Status: Value of $value: $result{$key}{$value}{status}.\n" if $o_verbose >= 2;
-#            $return{$value} = $result{$key}{$value}{status}{state};
             $return{$value} = $result{$key}{$value}{status};
 	    next; 
           }
           next unless defined $result{$key}{$value}{$sub}{id};
-#          print "[V] Status: $sub-Value of $value: $result{$key}{$value}{status}{state}.\n" if $o_verbose >= 2;
           print "[V] Status: $sub-Value of $value: $result{$key}{$value}{status}.\n" if $o_verbose >= 2;
-#          $return{$value} = $result{$key}{$value}{status}{state} if $result{$key}{$value}{$sub}{id} eq $id;
           $return{$value} = $result{$key}{$value}{status} if $result{$key}{$value}{$sub}{id} eq $id;
         }else{
-#          print "[V] Status: Value of $value: $result{$key}{$value}{status}{state}.\n" if $o_verbose >= 2;
           print "[V] Status: Value of $value: $result{$key}{$value}{status}.\n" if $o_verbose >= 2;
-#          $return{$value} = $result{$key}{$value}{status}{state};
           $return{$value} = $result{$key}{$value}{status};
         }
       }
@@ -742,31 +736,14 @@ sub check_status {
       my %return;
       # single result
       print "[V] Status: single hash entry found.\n" if $o_verbose >= 2;
-#      if (defined $id){
-#        my $sub = "cluster";
-#           $sub = "vmpool" if $searchid eq "vmpool";
-#        print "[D] check_status: Variable \$sub: $sub.\n" if $o_verbose == 3;
-#        if ($components eq "networks") { 
-#          $return{$result{$component}{'name'}} = $result{$component}{status}{state}; 
-#          print "[V] Status: Result: $result{$component}{status}{state}.\n" if $o_verbose >= 2;
-#        }else { 
-#          next unless defined $result{$component}{$sub}{id};
-#          print "[V] Status: Result: $result{$component}{status}{state}.\n" if $o_verbose >= 2;
-#          print "[V] Status: $sub-ID: $result{$component}{$sub}{id}.\n" if $o_verbose >= 2;
-#          $return{$result{$component}{'name'}} = $result{$component}{status}{state} if $result{$component}{$sub}{id} eq $id;
-#        }
-#      }else{
-        print "[D] check_status: Converting variable \$components.\n" if $o_verbose == 3;
-        chop $components;
-        print "[D] check_status: Converted variable \$components: $components\n" if $o_verbose == 3;
-        # storage domains with status active don't have <status><state>!
-#        if ( (! defined $result{$component}{status}{state}) && (! defined $result{$component}{id}) ){ 
-        if (! defined $result{$component}{status}){ 
-          print_notfound(ucfirst($components), $search);
-        }
-        print "[V] Status: Result: $result{$component}{status}\n" if $o_verbose >= 2;
-        $return{$result{$component}{'name'}} = $result{$component}{status};
-#      }
+      print "[D] check_status: Converting variable \$components.\n" if $o_verbose == 3;
+      chop $components;
+      print "[D] check_status: Converted variable \$components: $components\n" if $o_verbose == 3;
+      if (! defined $result{$component}{status}){ 
+        print_notfound(ucfirst($components), $search);
+      }
+      print "[V] Status: Result: $result{$component}{status}\n" if $o_verbose >= 2;
+      $return{$result{$component}{'name'}} = $result{$component}{status};
       return \%return;
     }
   }
@@ -822,7 +799,6 @@ sub check_istatus{
         print "[V] Status: Multiple hash entries found.\n" if $o_verbose >= 2;
         print "[D] check_istatus: Looping through second hash level.\n" if $o_verbose == 3;
         foreach my $val (keys %{ $result{$value} }){
-#          next unless defined( $result{$value}{$val}{status}{state} );  # don't count virtual nics
           next unless defined( $result{$value}{$val}{status} );  # don't count virtual nics
           # only count specifed nics
           my $match = 0;
@@ -833,18 +809,13 @@ sub check_istatus{
             next unless $match == 1;
           }
           $size++;
-#          $ok++ if $result{$value}{$val}{status}{state} eq "active";        # storagedomain
-#          $ok++ if $result{$value}{$val}{status}{state} eq "operational";   # network
-#          $ok++ if $result{$value}{$val}{status}{state} eq "up";        # nics
           $ok++ if $result{$value}{$val}{status} eq "active";        # storagedomain
           $ok++ if $result{$value}{$val}{status} eq "operational";   # network
           $ok++ if $result{$value}{$val}{status} eq "up";        # nics
-#          print "[V] Status: Value of $val: $result{$value}{$val}{status}{state}.\n" if $o_verbose >= 2;
           print "[V] Status: Value of $val: $result{$value}{$val}{status}.\n" if $o_verbose >= 2;
         }
       }else{
         print "[V] Status: single hash entry found.\n" if $o_verbose >= 2;
-#        next unless $result{$value}{status}{state}; # don't count virtual nics
         next unless $result{$value}{status}; # don't count virtual nics
         # only count specifed nics
         my $match = 0;
@@ -855,13 +826,9 @@ sub check_istatus{
           next unless $match == 1;
         }
         $size++;
-#        $ok++ if $result{$value}{status}{state} eq "active";        # storagedomain
-#        $ok++ if $result{$value}{status}{state} eq "operational";   # network
-#        $ok++ if $result{$value}{status}{state} eq "up";        # nics
         $ok++ if $result{$value}{status} eq "active";        # storagedomain
         $ok++ if $result{$value}{status} eq "operational";   # network
         $ok++ if $result{$value}{status} eq "up";        # nics
-#        print "[V] Status: Value of $result{$value}{name}: $result{$value}{status}{state}\n" if $o_verbose >= 2;
         print "[V] Status: Value of $result{$value}{name}: $result{$value}{status}\n" if $o_verbose >= 2;
       }
     }
@@ -889,7 +856,6 @@ sub check_istatus{
   }else{
     exit_plugin('critical',ucfirst($subcheck),"$ok/$size " . ucfirst($subcheck) . " with state $state" . $perf);
   }
-#  print_notfound("Storage", "???");
 }
 
 
@@ -1216,7 +1182,6 @@ sub get_stats {
         my $cpu_guest  = $result{statistic}{"cpu.current.guest"}{values}{value}{datum};
         my $cpu_hypervisor = $result{statistic}{"cpu.current.hypervisor"}{values}{value}{datum};
            $cpu_usage  = $result{statistic}{"cpu.current.total"}{values}{value}{datum};
-#          $cpu_usage  = 100 - $cpu_total;
         $rethash{$key}{stats}{"cpu.current.guest"} = $cpu_guest;
         $rethash{$key}{stats}{"cpu.current.hypervisor"} = $cpu_hypervisor;
       }
