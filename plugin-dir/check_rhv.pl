@@ -3,16 +3,16 @@
 
 #######################################################
 #                                                     #
-#  Name:    check_rhev3                               #
+#  Name:    check_rhv                                 #
 #                                                     #
-#  Version: 1.6.0                                     #
+#  Version: 2.0.0                                     #
 #  Created: 2012-08-13                                #
-#  Last Update: 2016-11-06                            #
+#  Last Update: 2018-04-09                            #
 #  License: GPL - http://www.gnu.org/licenses         #
 #  Copyright: (c)2012,2013 ovido gmbh                 #
-#             (c)2014-2016 Rene Koch                  #
+#             (c)2014-2018 Rene Koch                  #
 #  Author:  Rene Koch <rkoch@rk-it.at>                #
-#  URL: https://github.com/ovido/check_rhev3          #
+#  URL: https://github.com/rk-it-at/check_rhv         #
 #                                                     #
 #######################################################
 
@@ -44,7 +44,7 @@ use Data::Dumper;
 # Configuration
 # all values can be overwritten via command line options
 my $rhevm_port  = 443;          # default port
-my $rhevm_api   = "/api";       # default api path
+my $rhevm_api   = "/ovirt-engine/api";       # default api path
 my $rhevm_timeout = 15;         # default timeout
 
 # create performance data
@@ -54,9 +54,9 @@ my $perfdata   = 1;
 
 
 # Variables
-my $prog       = "check_rhev3";
-my $version    = "1.6.0";
-my $projecturl = "https://github.com/ovido/check_rhev3";
+my $prog       = "check_rhv";
+my $version    = "2.0.0";
+my $projecturl = "https://github.com/rk-it-at/check_rhv";
 my $cookie     = "/var/tmp";   # default path to cookie file
 
 my $o_verbose      = undef;   # verbosity
@@ -283,9 +283,9 @@ sub print_usage(){
 #                                                   #
 #***************************************************#
 sub print_help(){
-  print "\nRed Hat Enterprise Virtualization checks for Icinga/Nagios version $version\n";
+  print "\nRed Hat Virtualization checks for Icinga/Nagios version $version\n";
   print "GPL license, (c)2012-2013   - ovido gmbh <r.koch\@ovido.at>\n";
-  print "             (c)2014-2016   - Rene Koch <rkoch\@rk-it.at>\n\n";
+  print "             (c)2014-2018   - Rene Koch <rkoch\@rk-it.at>\n\n";
   print_usage();
   print <<EOT;
 
@@ -718,16 +718,22 @@ sub check_status {
              $sub = "vmpool" if $searchid eq "vmpool";
           print "[D] check_status: Variable \$sub: $sub.\n" if $o_verbose == 3;
           if ($components eq "networks") { 
-            print "[V] Status: Value of $value: $result{$key}{$value}{status}{state}.\n" if $o_verbose >= 2;
-            $return{$value} = $result{$key}{$value}{status}{state};
+#            print "[V] Status: Value of $value: $result{$key}{$value}{status}{state}.\n" if $o_verbose >= 2;
+            print "[V] Status: Value of $value: $result{$key}{$value}{status}.\n" if $o_verbose >= 2;
+#            $return{$value} = $result{$key}{$value}{status}{state};
+            $return{$value} = $result{$key}{$value}{status};
 	    next; 
           }
           next unless defined $result{$key}{$value}{$sub}{id};
-          print "[V] Status: $sub-Value of $value: $result{$key}{$value}{status}{state}.\n" if $o_verbose >= 2;
-          $return{$value} = $result{$key}{$value}{status}{state} if $result{$key}{$value}{$sub}{id} eq $id;
+#          print "[V] Status: $sub-Value of $value: $result{$key}{$value}{status}{state}.\n" if $o_verbose >= 2;
+          print "[V] Status: $sub-Value of $value: $result{$key}{$value}{status}.\n" if $o_verbose >= 2;
+#          $return{$value} = $result{$key}{$value}{status}{state} if $result{$key}{$value}{$sub}{id} eq $id;
+          $return{$value} = $result{$key}{$value}{status} if $result{$key}{$value}{$sub}{id} eq $id;
         }else{
-          print "[V] Status: Value of $value: $result{$key}{$value}{status}{state}.\n" if $o_verbose >= 2;
-          $return{$value} = $result{$key}{$value}{status}{state};
+#          print "[V] Status: Value of $value: $result{$key}{$value}{status}{state}.\n" if $o_verbose >= 2;
+          print "[V] Status: Value of $value: $result{$key}{$value}{status}.\n" if $o_verbose >= 2;
+#          $return{$value} = $result{$key}{$value}{status}{state};
+          $return{$value} = $result{$key}{$value}{status};
         }
       }
       return \%return;
@@ -736,30 +742,31 @@ sub check_status {
       my %return;
       # single result
       print "[V] Status: single hash entry found.\n" if $o_verbose >= 2;
-      if (defined $id){
-        my $sub = "cluster";
-           $sub = "vmpool" if $searchid eq "vmpool";
-        print "[D] check_status: Variable \$sub: $sub.\n" if $o_verbose == 3;
-        if ($components eq "networks") { 
-          $return{$result{$component}{'name'}} = $result{$component}{status}{state}; 
-          print "[V] Status: Result: $result{$component}{status}{state}.\n" if $o_verbose >= 2;
-        }else { 
-          next unless defined $result{$component}{$sub}{id};
-          print "[V] Status: Result: $result{$component}{status}{state}.\n" if $o_verbose >= 2;
-          print "[V] Status: $sub-ID: $result{$component}{$sub}{id}.\n" if $o_verbose >= 2;
-          $return{$result{$component}{'name'}} = $result{$component}{status}{state} if $result{$component}{$sub}{id} eq $id;
-        }
-      }else{
+#      if (defined $id){
+#        my $sub = "cluster";
+#           $sub = "vmpool" if $searchid eq "vmpool";
+#        print "[D] check_status: Variable \$sub: $sub.\n" if $o_verbose == 3;
+#        if ($components eq "networks") { 
+#          $return{$result{$component}{'name'}} = $result{$component}{status}{state}; 
+#          print "[V] Status: Result: $result{$component}{status}{state}.\n" if $o_verbose >= 2;
+#        }else { 
+#          next unless defined $result{$component}{$sub}{id};
+#          print "[V] Status: Result: $result{$component}{status}{state}.\n" if $o_verbose >= 2;
+#          print "[V] Status: $sub-ID: $result{$component}{$sub}{id}.\n" if $o_verbose >= 2;
+#          $return{$result{$component}{'name'}} = $result{$component}{status}{state} if $result{$component}{$sub}{id} eq $id;
+#        }
+#      }else{
         print "[D] check_status: Converting variable \$components.\n" if $o_verbose == 3;
         chop $components;
         print "[D] check_status: Converted variable \$components: $components\n" if $o_verbose == 3;
         # storage domains with status active don't have <status><state>!
-        if ( (! defined $result{$component}{status}{state}) && (! defined $result{$component}{id}) ){ 
+#        if ( (! defined $result{$component}{status}{state}) && (! defined $result{$component}{id}) ){ 
+        if (! defined $result{$component}{status}){ 
           print_notfound(ucfirst($components), $search);
         }
-        print "[V] Status: Result: $result{$component}{status}{state}\n" if $o_verbose >= 2;
-        $return{$result{$component}{'name'}} = $result{$component}{status}{state};
-      }
+        print "[V] Status: Result: $result{$component}{status}\n" if $o_verbose >= 2;
+        $return{$result{$component}{'name'}} = $result{$component}{status};
+#      }
       return \%return;
     }
   }
@@ -815,7 +822,8 @@ sub check_istatus{
         print "[V] Status: Multiple hash entries found.\n" if $o_verbose >= 2;
         print "[D] check_istatus: Looping through second hash level.\n" if $o_verbose == 3;
         foreach my $val (keys %{ $result{$value} }){
-          next unless defined( $result{$value}{$val}{status}{state} );  # don't count virtual nics
+#          next unless defined( $result{$value}{$val}{status}{state} );  # don't count virtual nics
+          next unless defined( $result{$value}{$val}{status} );  # don't count virtual nics
           # only count specifed nics
           my $match = 0;
           if (scalar @o_nics > 0){
@@ -825,14 +833,19 @@ sub check_istatus{
             next unless $match == 1;
           }
           $size++;
-          $ok++ if $result{$value}{$val}{status}{state} eq "active";        # storagedomain
-          $ok++ if $result{$value}{$val}{status}{state} eq "operational";   # network
-          $ok++ if $result{$value}{$val}{status}{state} eq "up";        # nics
-          print "[V] Status: Value of $val: $result{$value}{$val}{status}{state}.\n" if $o_verbose >= 2;
+#          $ok++ if $result{$value}{$val}{status}{state} eq "active";        # storagedomain
+#          $ok++ if $result{$value}{$val}{status}{state} eq "operational";   # network
+#          $ok++ if $result{$value}{$val}{status}{state} eq "up";        # nics
+          $ok++ if $result{$value}{$val}{status} eq "active";        # storagedomain
+          $ok++ if $result{$value}{$val}{status} eq "operational";   # network
+          $ok++ if $result{$value}{$val}{status} eq "up";        # nics
+#          print "[V] Status: Value of $val: $result{$value}{$val}{status}{state}.\n" if $o_verbose >= 2;
+          print "[V] Status: Value of $val: $result{$value}{$val}{status}.\n" if $o_verbose >= 2;
         }
       }else{
         print "[V] Status: single hash entry found.\n" if $o_verbose >= 2;
-        next unless $result{$value}{status}{state}; # don't count virtual nics
+#        next unless $result{$value}{status}{state}; # don't count virtual nics
+        next unless $result{$value}{status}; # don't count virtual nics
         # only count specifed nics
         my $match = 0;
         if (scalar @o_nics > 0){
@@ -842,10 +855,14 @@ sub check_istatus{
           next unless $match == 1;
         }
         $size++;
-        $ok++ if $result{$value}{status}{state} eq "active";        # storagedomain
-        $ok++ if $result{$value}{status}{state} eq "operational";   # network
-        $ok++ if $result{$value}{status}{state} eq "up";        # nics
-        print "[V] Status: Value of $result{$value}{name}: $result{$value}{status}{state}\n" if $o_verbose >= 2;
+#        $ok++ if $result{$value}{status}{state} eq "active";        # storagedomain
+#        $ok++ if $result{$value}{status}{state} eq "operational";   # network
+#        $ok++ if $result{$value}{status}{state} eq "up";        # nics
+        $ok++ if $result{$value}{status} eq "active";        # storagedomain
+        $ok++ if $result{$value}{status} eq "operational";   # network
+        $ok++ if $result{$value}{status} eq "up";        # nics
+#        print "[V] Status: Value of $result{$value}{name}: $result{$value}{status}{state}\n" if $o_verbose >= 2;
+        print "[V] Status: Value of $result{$value}{name}: $result{$value}{status}\n" if $o_verbose >= 2;
       }
     }
     print "[V] Status: $ok/$size " . ucfirst($subcheck) . " in Cluster $key OK\n" if $o_verbose >= 2;
@@ -1706,9 +1723,6 @@ sub rhev_connect{
   }
 
   my $rr = HTTP::Request->new(GET => $rhevm_url);
-
-  # explicitly use version 3 of the API
-  $rr->header('Version' => '3');
 
   # cookie authentication or basic auth
   my $cf = `echo "$o_rhevm_host-$rhevm_user" | base64 -w0`;
