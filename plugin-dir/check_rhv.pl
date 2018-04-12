@@ -126,13 +126,13 @@ sub parse_options(){
   print_version()   if defined $o_version;
 
   if (! defined( $o_rhevm_host )){
-    print "RHEV Manager hostname is missing.\n";
+    print "RHV Manager hostname is missing.\n";
     print_usage();
     exit $ERRORS{$status{'unknown'}};
   }
 
   if ( (! defined( $o_rhev_dc )) && (! defined( $o_rhev_cluster )) && (! defined( $o_rhev_host )) && (! defined ( $o_rhev_storage)) && (! defined ( $o_rhev_vm)) && (! defined ( $o_rhev_vmpool)) ){
-    print "Data Center, Cluster, RHEV Host, Storage domain, VM or VM Pool is missing.\n";
+    print "Data Center, Cluster, RHV Host, Storage domain, VM or VM Pool is missing.\n";
     print_usage();
     exit $ERRORS{$status{'unknown'}};
   };
@@ -149,19 +149,19 @@ sub parse_options(){
   if (defined( $o_auth )){
     my @auth = split(/:/, $o_auth);
     if (! $auth[0]){ 
-     print "RHEV Username/Domain is missing.\n";
+     print "RHV Username/Domain is missing.\n";
      print_help();
     }else{  $rhevm_user = $auth[0]; }
     if (! $auth[1]){
-      print "RHEV Password is missing.\n";
+      print "RHV Password is missing.\n";
       print_help();
     }else{  $rhevm_pwd = $auth[1];  }
     my @tmp_auth = split(/@/, $auth[0]);
     if (! $tmp_auth[0]){ 
-      print "RHEV Username is missing.\n";
+      print "RHV Username is missing.\n";
       print_help(); }
     if (! $tmp_auth[1]){ 
-      print "RHEV Domain is missing.\n";
+      print "RHV Domain is missing.\n";
       print_help(); }
   }else{
     if (! defined $o_authfile){
@@ -179,17 +179,17 @@ sub parse_options(){
         $rhevm_user =~  s/username=//;
         my @tmp_auth = split(/@/, $rhevm_user);
         if (! $tmp_auth[0]){
-          print "RHEV Username is missing.\n";
+          print "RHV Username is missing.\n";
           print_help();
         }elsif (! $tmp_auth[1]){
-          print "RHEV Domain ins missing.\n";
+          print "RHV Domain ins missing.\n";
           print_help();
         }
       }elsif ($_ =~ /^password=/){
         $rhevm_pwd = $_;
         $rhevm_pwd =~ s/password=//;
         if (! $rhevm_pwd){
-          print "RHEV Password is missing.\n";
+          print "RHV Password is missing.\n";
           print_help();
         }
       }
@@ -295,7 +295,7 @@ Options:
  -V, --version
     Print version information
  -H, --hostname
-    Host name or IP Address of RHEV Manager
+    Host name or IP Address of RHV Manager
  -p, --port=INTEGER
     port number (default: $rhevm_port)
  -a, --authorization=AUTH_PAIR
@@ -305,7 +305,7 @@ Options:
     username=Username\@Domain
     password=Password
  --ca-file=CA_FILE
-    Path to RHEV CA for SSL certificate verification
+    Path to RHV CA for SSL certificate verification
  -o, --cookie
     Use cookie based authenticated sessions (requires RHEV >= 3.1)
  -A, --api
@@ -313,17 +313,17 @@ Options:
  -t, --timeout=INTEGER
     Seconds before connection times out (default: $rhevm_timeout)
  -D, --dc
-    RHEV data center name
+    RHV data center name
  -C, --cluster
-    RHEV cluster name
+    RHV cluster name
  -R, --host
-    RHEV Hypervisor name
+    RHV Hypervisor name
  -S, --storage
-    RHEV Storage domain name
+    RHV Storage domain name
  -M, --vm
-    RHEV virtual machine name
+    RHV virtual machine name
  -P, --vmpool
-    RHEV vm pool
+    RHV vm pool
  -l, --check
     DC/Cluster/Hypervisor/VM/Storage Pool Check
     see $projecturl or README for details
@@ -1209,7 +1209,7 @@ sub get_stats {
         my $mem_installed = $result{statistic}{"memory.installed"}{values}{value}{datum};
         my $mem_used      = $result{statistic}{"memory.used"}{values}{value}{datum};
         # Memory is the amount of memory used on the hypervisor, not the amount of memory used in the guest
-        # If this value is below 0, set it to 0 (negative value is a bug in oVirt/RHEV-API)
+        # If this value is below 0, set it to 0 (negative value is a bug in oVirt/RHV-API)
         if ($mem_used < 0){
           $mem_used = 0;
         }
@@ -1303,7 +1303,7 @@ sub get_stats {
 #***************************************************#
 
 sub print_unknown{
-  print "RHEV $status{'unknown'}: Unknown $_[0] check is given.\n";
+  print "RHV $status{'unknown'}: Unknown $_[0] check is given.\n";
   print_help;
   exit $ERRORS{$status{'unknown'}};
 }
@@ -1319,7 +1319,7 @@ sub print_unknown{
 #***************************************************#
 
 sub exit_plugin{
-  print "RHEV $status{$_[0]}: $_[1] $_[0] - $_[2]\n";
+  print "RHV $status{$_[0]}: $_[1] $_[0] - $_[2]\n";
   exit $ERRORS{$status{$_[0]}};
 }
 
@@ -1383,7 +1383,7 @@ sub print_notfound{
   print "[D] print_notfound: Called function print_notfound.\n" if $o_verbose == 3;
   print "[D] print_notfound: Input parameter: $_[0]\n" if $o_verbose == 3;
   print "[D] print_notfound: Input parameter: $_[1]\n" if $o_verbose == 3;
-  print "RHEV $status{'unknown'}: $_[0] $_[1] not found.\n";
+  print "RHV $status{'unknown'}: $_[0] $_[1] not found.\n";
   exit $ERRORS{$status{'unknown'}};
 }
 
@@ -1473,7 +1473,7 @@ sub write_errors_file{
   print "[D] write_errors_file: Input parameter: $_[0]\n" if $o_verbose == 3;
   print "[D] write_errors_file: Input parameter: $_[1]\n" if $o_verbose == 3;
   if (! open ERRORS, ">$_[0]"){
-    print "RHEV $status{'unknown'}: Can't open file $_[0] for writing: $!\n";
+    print "RHV $status{'unknown'}: Can't open file $_[0] for writing: $!\n";
     exit $ERRORS{'UNKNOWN'};
   }else{
     print ERRORS $_[1];
@@ -1647,7 +1647,7 @@ sub eval_status{
 #***************************************************#
 #  Function: rhev_connect                           #
 #---------------------------------------------------#
-#  Connect to RHEV Manager via REST-API and get     #
+#  Connect to RHV Manager via REST-API and get     #
 #  values.                                          #
 #  ARG1: API path                                   #
 #***************************************************#
@@ -1659,9 +1659,9 @@ sub rhev_connect{
 
   # construct URL
   my $rhevm_url = "https://" . $o_rhevm_host . ":" . $rhevm_port . $rhevm_api . $_[0];
-  print "[V] REST-API: RHEVM-API URL: $rhevm_url\n" if $o_verbose >= 2;
-  print "[V] REST-API: RHEVM-API User: $rhevm_user\n" if $o_verbose >= 2;
-  #print "[V] REST-API: RHEVM-API Password: $rhevm_pwd\n" if $o_verbose >= 2;
+  print "[V] REST-API: RHVM-API URL: $rhevm_url\n" if $o_verbose >= 2;
+  print "[V] REST-API: RHVM-API User: $rhevm_user\n" if $o_verbose >= 2;
+  #print "[V] REST-API: RHVM-API Password: $rhevm_pwd\n" if $o_verbose >= 2;
 
   # connect to REST-API
   my $ra = LWP::UserAgent->new();
@@ -1724,7 +1724,7 @@ sub rhev_connect{
   } else {
     $result = eval { XMLin($re->content) };
   }
-  print "RHEV $status{'critical'}: Error in XML returned from RHEVM - enable debug mode for details.\n" if $@;
+  print "RHV $status{'critical'}: Error in XML returned from RHVM - enable debug mode for details.\n" if $@;
   return $result;
 
 }
@@ -1733,7 +1733,7 @@ sub rhev_connect{
 #***************************************************#
 #  Function: rest_api_connect                       #
 #---------------------------------------------------#
-#  Connect to RHEV Manager via REST-API             #
+#  Connect to RHV Manager via REST-API             #
 #  ARG1: HTTP::Request                              #
 #  ARG2: LWP::Useragent                             #
 #  ARG3: Cookie                                     #
@@ -1754,7 +1754,7 @@ sub rest_api_connect{
   print "[V] REST-API: " . $re->headers_as_string if $o_verbose >= 2;
   print "[D] rest_api_connect: " . $re->content if $o_verbose >= 3;
   if (! $re->is_success){   
-    print "RHEV $status{'unknown'}: Failed to connect to RHEVM-API or received invalid response.\n"; 
+    print "RHV $status{'unknown'}: Failed to connect to RHVM-API or received invalid response.\n"; 
     if (-f $cookie){
       print "[D] rhev_connect: Deleting file $cookie\n" if $o_verbose == 3;
       unlink $cookie;
@@ -1770,7 +1770,7 @@ sub rest_api_connect{
     print "[V] REST_API: jsessionid: $jsessionid[0]\n" if $o_verbose >= 2;
     print "[D] rest_api_connect: Creating new cookie file $cookie.\n" if $o_verbose == 3;
     if (! open COOKIE, ">$cookie"){
-      print "RHEV $status{'unknown'}: Can't open file $cookie for writing: $!\n";
+      print "RHV $status{'unknown'}: Can't open file $cookie for writing: $!\n";
       exit $ERRORS{'UNKNOWN'};
     }else{
       print COOKIE $jsessionid[0];
