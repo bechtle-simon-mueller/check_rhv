@@ -15,7 +15,7 @@
 prefix=@pnp_dir@
 INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
-libexec_SCRIPTS=check_rhev3.php
+libexec_SCRIPTS=check_rhv.php
 
 # compile
 all:
