@@ -51,7 +51,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Thu Apr 20 2018 Rene Koch <rkoch@rk-it.at> 2.0-1
+* Fri Apr 20 2018 Rene Koch <rkoch@rk-it.at> 2.0-1
 - Initial build of renamed package nagios-plugins-rhv
 
 * Sun Nov 06 2016 Rene Koch <rkoch@rk-it.at> 1.6-1
@@ -66,7 +66,7 @@ rm -rf $RPM_BUILD_ROOT
 * Thu Nov 07 2013 Rene Koch <r.koch@ovido.at> 1.3-1
 - Initial build
 
-* Thu Jul 23 2013 Rene Koch <r.koch@ovido.at> 1.2.1-1
+* Tue Jul 23 2013 Rene Koch <r.koch@ovido.at> 1.2.1-1
 - Initial build
 
 * Thu May 16 2013 Rene Koch <r.koch@ovido.at> 1.2-1
@@ -81,6 +81,6 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Aug 31 2012 Rene Koch <r.koch@ovido.at> 1.0-2
 - Removed BuildArch: noarch
 
-* Wed Aug 27 2012 Rene Koch <r.koch@ovido.at> 1.0-1
+* Mon Aug 27 2012 Rene Koch <r.koch@ovido.at> 1.0-1
 - Initial build.
 

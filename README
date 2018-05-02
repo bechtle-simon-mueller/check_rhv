@@ -1,10 +1,10 @@
 #*********************************************************#
 #                                                         #
-#     README for check_rhev3 plugin for Icinga/Nagios     #
+#     README for check_rhv plugin for Icinga/Nagios       #
 #                                                         #
 #*********************************************************#
 
-What is check_rhev3?
+What is check_rhv?
 ====================
 
 This plugin for Icinga/Nagios is used to monitor a variety of
@@ -27,14 +27,14 @@ a pull request on Github. Thanks.
 Installation
 ============
 
-The check_rhev3 installation can be used by following the standard autotools
+The check_rhv installation can be used by following the standard autotools
 installation process, documented in the INSTALL file. As a quick start you can do
 
 $ ./configure
 $ make all
 # make install
 
-This will install check_rhev3 to /usr/local/nagios/libexec and the PNP template
+This will install check_rhv to /usr/local/nagios/libexec and the PNP template
 to /usr/local/pnp4nagios/share/templates.
 
 To change these paths use the following options:
@@ -48,7 +48,7 @@ To change the user and group ownership of these files use:
 --with-nagios-user=<user>
 --with-nagios-group=<group>
 
-The 'nagios-plugins-rhev3.spec' file demonstrates how to distribute check_rhev3
+The 'nagios-plugins-rhev3.spec' file demonstrates how to distribute check_rhv
 as an RPM package.
 
 Also make sure that the following requirements are met:
@@ -77,76 +77,76 @@ Documentation
 Short documentation on how to use this plugin.
 
 Detailed documentation can be found on the project website
-https://github.com/ovido/check_rhev3.
+https://github.com/ovido/check_rhv.
 
 The following checks can be performed by this plugin:
 
 Datacenter
 ----------
-check_rhev3 -H rhevm -a admin@internal:password -D default
-check_rhev3 -H rhevm -a admin@internal:password -D default -l status
-check_rhev3 -H rhevm -a admin@internal:password -D default -l version
-check_rhev3 -H rhevm -a admin@internal:password -D default -l storage
-check_rhev3 -H rhevm -a admin@internal:password -D default -l storage -s status
-check_rhev3 -H rhevm -a admin@internal:password -D default -l storage -s usage
-check_rhev3 -H rhevm -a admin@internal:password -D default -l storage -s overall-usage
+check_rhv -H rhevm -a admin@internal:password -D default
+check_rhv -H rhevm -a admin@internal:password -D default -l status
+check_rhv -H rhevm -a admin@internal:password -D default -l version
+check_rhv -H rhevm -a admin@internal:password -D default -l storage
+check_rhv -H rhevm -a admin@internal:password -D default -l storage -s status
+check_rhv -H rhevm -a admin@internal:password -D default -l storage -s usage
+check_rhv -H rhevm -a admin@internal:password -D default -l storage -s overall-usage
 
 Cluster
 -------
-check_rhev3 -H rhevm -a admin@internal:password -C default
-check_rhev3 -H rhevm -a admin@internal:password -C default -l hosts
-check_rhev3 -H rhevm -a admin@internal:password -C default -l vms
-check_rhev3 -H rhevm -a admin@internal:password -C default -l networks
+check_rhv -H rhevm -a admin@internal:password -C default
+check_rhv -H rhevm -a admin@internal:password -C default -l hosts
+check_rhv -H rhevm -a admin@internal:password -C default -l vms
+check_rhv -H rhevm -a admin@internal:password -C default -l networks
 
 Hosts
 -----
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l status
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l load
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l cpu
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l cpu -s usage
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l ksm
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l memory
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l memory -s mem
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l memory -s swap
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l network
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l network -s status
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l network -s traffic
-check_rhev3 -H rhevm -a admin@internal:password -R rhevh -l network -s errors
+check_rhv -H rhevm -a admin@internal:password -R rhevh
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l status
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l load
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l cpu
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l cpu -s usage
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l ksm
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l memory
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l memory -s mem
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l memory -s swap
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l network
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l network -s status
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l network -s traffic
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l network -s errors
 
 Storage
 -------
-check_rhev3 -H rhevm -a admin@internal:password -S storage
-check_rhev3 -H rhevm -a admin@internal:password -S storage -l status
-check_rhev3 -H rhevm -a admin@internal:password -S storage -l usage
+check_rhv -H rhevm -a admin@internal:password -S storage
+check_rhv -H rhevm -a admin@internal:password -S storage -l status
+check_rhv -H rhevm -a admin@internal:password -S storage -l usage
 
 VMs
 ---
-check_rhev3 -H rhevm -a admin@internal:password -M vm
-check_rhev3 -H rhevm -a admin@internal:password -M vm -l status
-check_rhev3 -H rhevm -a admin@internal:password -M vm -l cpu
-check_rhev3 -H rhevm -a admin@internal:password -M vm -l memory
-check_rhev3 -H rhevm -a admin@internal:password -M vm -l network
-check_rhev3 -H rhevm -a admin@internal:password -M vm -l network -s traffic
-check_rhev3 -H rhevm -a admin@internal:password -M vm -l network -s errors
+check_rhv -H rhevm -a admin@internal:password -M vm
+check_rhv -H rhevm -a admin@internal:password -M vm -l status
+check_rhv -H rhevm -a admin@internal:password -M vm -l cpu
+check_rhv -H rhevm -a admin@internal:password -M vm -l memory
+check_rhv -H rhevm -a admin@internal:password -M vm -l network
+check_rhv -H rhevm -a admin@internal:password -M vm -l network -s traffic
+check_rhv -H rhevm -a admin@internal:password -M vm -l network -s errors
 
 VM Pools
 --------
-check_rhev3 -H rhevm -a admin@internal:password -P pool
-check_rhev3 -H rhevm -a admin@internal:password -P pool -l usage
+check_rhv -H rhevm -a admin@internal:password -P pool
+check_rhv -H rhevm -a admin@internal:password -P pool -l usage
 
 
 Sample Icinga/Nagios definitions
 --------------------------------
 
 Detailed information can be found on the project website
-https://github.com/ovido/check_rhev3
+https://github.com/ovido/check_rhv
 
 Command
 -------
 define command{
-  command_name check_rhev3
-  command_line $USER1$/check_rhev3 -H $_RHEVM$ -a $ARG1$ $ARG2$
+  command_name check_rhv
+  command_line $USER1$/check_rhv -H $_RHEVM$ -a $ARG1$ $ARG2$
 }
 
 Host
@@ -165,6 +165,6 @@ define service{
   use                 generic-service
   host_name           rhevh
   service_description RHEV CPU Check
-  check_command       check_rhev3!admin@internal:password!-R $HOSTNAME$ -l cpu
+  check_command       check_rhv!admin@internal:password!-R $HOSTNAME$ -l cpu
 }
 
