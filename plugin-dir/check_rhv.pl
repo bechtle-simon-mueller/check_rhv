@@ -455,6 +455,7 @@ sub check_cluster{
     check_cstatus("clustervms","$o_rhev_cluster")   if $o_check eq "vms";
     check_istatus("clusters",$o_rhev_cluster,"networks")   if $o_check eq "networks";
     check_istatus("clusters",$o_rhev_cluster,"glustervolumes")   if $o_check eq "glustervolumes";
+    check_istatus("glustervolumes",$o_rhev_cluster,"glusterbricks")   if $o_check eq "glusterbricks";
     print_unknown("cluster");
   }else{
     print "[V] Cluster: No check is specified, checking cluster host status.\n" if $o_verbose >= 2;
@@ -780,7 +781,14 @@ sub check_istatus{
   $url =~ s/_//g;
   print "[D] check_istatus: Converted variable \$url: $url\n" if $o_verbose == 3;
   # get datacenter or cluster id
-  my $iref = get_result("/$url?search=name%3D$search",$component,"id");
+  my $iref = undef;
+  if ($component eq "glustervolumes"){
+    $iref = get_result("/clusters?search=name%3D$search","clusters","id");
+    $url = "clusters/$iref->{$search}/glustervolumes";
+    $iref = get_result("/clusters/$iref->{$search}/glustervolumes","gluster_volumes","id");
+  }else{
+    $iref = get_result("/$url?search=name%3D$search",$component,"id");
+  }
   my %id = %{ $iref };
   print "[D] check_istatus: \%id: " if $o_verbose == 3; print Dumper(%id) if $o_verbose == 3;
 
@@ -797,6 +805,9 @@ sub check_istatus{
     print "[D] check_istatus: \%result: " if $o_verbose == 3; print Dumper(%result) if $o_verbose == 3;
     print "[D] check_istatus: Looping through \%result\n" if $o_verbose == 3;
     foreach my $value (keys %result){
+      if ($component eq "glustervolumes"){
+        next unless $value eq 'brick';
+      }
       if (! $result{$value}{id}){
         print "[V] Status: Multiple hash entries found.\n" if $o_verbose >= 2;
         print "[D] check_istatus: Looping through second hash level.\n" if $o_verbose == 3;
