@@ -1466,14 +1466,13 @@ sub check_nic_errors{
     }
     my $errors = `cat $cookie/$host/$nic`;
     if ($errors !~ /^(\d)+$/){
-      print "Interface errors in file $cookie/$host/$nic not a number: $errors\n";
-      exit $ERRORS{$status{'unknown'}};
+      $errors = 0;
     }
     $return = $error - $errors;
     # set counter to 0 if value is negative
     # this can happen if counter is reseted on host (e.g. reboot)
     $return = 0 if $return < 0;
-    write_errors_file($cookie . "/" . $host . "/" . $nic, $error);
+    write_errors_file($cookie . "/" . $host . "/" . $nic,$error);
   }else{
     $return = $error;
     write_errors_file($cookie . "/" . $host . "/" . $nic, $error);
