@@ -481,6 +481,7 @@ sub check_host{
     check_statistics("hosts","$o_rhev_host","cpu.load.avg.5m") if $o_check eq "load";
     check_statistics("hosts","$o_rhev_host","cpu") if $o_check eq "cpu";
     check_statistics("hosts","$o_rhev_host","ksm.cpu.current") if $o_check eq "ksm";
+    &check_host_updates if $o_check eq "updates";
     if ($o_check eq "memory"){
       if (defined $o_subcheck){
         check_statistics("hosts","$o_rhev_host","memory") if $o_subcheck eq "mem";
@@ -506,6 +507,27 @@ sub check_host{
     print "[V] Host: No check is specified, checking host status.\n" if $o_verbose >= 2; 
     check_cstatus("hosts","$o_rhev_host");
   }
+}
+
+
+#***************************************************#
+#  function check_host_updates                      #
+#---------------------------------------------------#
+#  Get available updates and exit.                  #
+#                                                   #
+#***************************************************#
+
+sub check_host_updates{
+  print "[D] check_host_updates: Called function check_host_updates\n" if $o_verbose == 3;
+  my $uref = get_result("/hosts?search=name%3D$o_rhev_host","hosts","update_available");
+  my %update = %{ $uref };
+  my $updates = undef;
+  my $status = "ok";
+  foreach my $u (keys %update){
+    $status = "critical" unless $update{$u} eq "false";
+    $updates .= "$u: $update{$u} ";
+  }
+  exit_plugin($status,"Updates available",$updates);
 }
 
 
