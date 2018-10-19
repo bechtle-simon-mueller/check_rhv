@@ -751,8 +751,13 @@ sub check_status {
   }
   $components = "Cluster" if $components eq "clustervms" || $components eq "clusterhosts";
   $components = "Host" if $components eq "hostvms";
-  print "[V] Status: Search pattern $search not found.\n" if $o_verbose >= 2;
-  print_notfound(ucfirst($components), $search);
+  # don't print an error message if no vms a running on a host
+  if (($components ne "Host") && ($component ne "vm")){;
+    print "[V] Status: Search pattern $search not found.\n" if $o_verbose >= 2;
+    print_notfound(ucfirst($components), $search);
+  }else{
+    exit_plugin('ok','Vms',"No vms running on this host!") if (! %result);
+  }
 }
 
 
