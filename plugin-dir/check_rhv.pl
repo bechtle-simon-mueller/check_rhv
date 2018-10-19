@@ -453,6 +453,7 @@ sub check_cluster{
     check_cstatus("clusterhosts","$o_rhev_cluster") if $o_check eq "hosts";
     check_cstatus("clustervms","$o_rhev_cluster")   if $o_check eq "vms";
     check_istatus("clusters",$o_rhev_cluster,"networks")   if $o_check eq "networks";
+    check_istatus("clusters",$o_rhev_cluster,"glustervolumes")   if $o_check eq "glustervolumes";
     print_unknown("cluster");
   }else{
     print "[V] Cluster: No check is specified, checking cluster host status.\n" if $o_verbose >= 2;
