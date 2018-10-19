@@ -521,12 +521,11 @@ sub check_storage{
   print "[V] Storage: Checking host $o_rhev_storage.\n" if $o_verbose >= 2;
   # is check given?
   if (defined $o_check){
-    check_cstatus("storage_domains","$o_rhev_storage") if $o_check eq "status";
     check_statistics("storage_domains",$o_rhev_storage,"storage") if $o_check eq "usage";
     print_unknown("storagedomains");
   }else{    
-    print "[V] Storage: No check is specified, checking storage status.\n" if $o_verbose >= 2; 
-    check_cstatus("storage_domains","$o_rhev_storage");
+    print "[V] Storage: No check is specified, checking storage usage.\n" if $o_verbose >= 2; 
+    check_statistics("storage_domains","$o_rhev_storage","storage");
   }
 }
 
