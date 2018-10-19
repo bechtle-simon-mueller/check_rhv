@@ -82,6 +82,7 @@ my $o_check        = undef;
 my $o_subcheck     = undef;
 my $o_ignore_xml_warn = undef;
 my @o_nics;
+my @o_volumes;
 
 my %status  = ( ok => "OK", warning => "WARNING", critical => "CRITICAL", unknown => "UNKNOWN");
 my %ERRORS  = ( "OK" => 0, "WARNING" => 1, "CRITICAL" => 2, "UNKNOWN" => 3);
@@ -808,6 +809,11 @@ sub check_istatus{
               $match = 1 if $val =~ /$o_nics[$n]$/;
             }
             next unless $match == 1;
+          }elsif (scalar @o_volumes > 0){
+            for (my $n=0;$n<=$#o_volumes;$n++){
+              $match = 1 if $val =~ /$o_volumes[$n]$/;
+            }
+            next unless $match == 1;
           }
           $size++;
           $ok++ if $result{$value}{$val}{status} eq "active";        # storagedomain
@@ -823,6 +829,11 @@ sub check_istatus{
         if (scalar @o_nics > 0){
           for (my $n=0;$n<=$#o_nics;$n++){
             $match = 1 if $result{$value}{name} =~ /$o_nics[$n]/;
+          }
+          next unless $match == 1;
+        }elsif (scalar @o_volumes > 0){
+          for (my $n=0;$n<=$#o_volumes;$n++){
+            $match = 1 if $result{$value}{name} =~ /$o_volumes[$n]/;
           }
           next unless $match == 1;
         }
