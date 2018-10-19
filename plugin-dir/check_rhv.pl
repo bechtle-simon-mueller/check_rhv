@@ -7,7 +7,7 @@
 #                                                     #
 #  Version: 2.0.0                                     #
 #  Created: 2012-08-13                                #
-#  Last Update: 2018-04-09                            #
+#  Last Update: 2018-10-19                            #
 #  License: GPL - http://www.gnu.org/licenses         #
 #  Copyright: (c)2012,2013 ovido gmbh                 #
 #             (c)2014-2018 Rene Koch                  #

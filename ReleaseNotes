@@ -1,36 +1,43 @@
-I'm happy to announce version 1.6 of check_rhev3.
+I'm happy to announce version 2.0 of check_rhv.
 
-check_rhev3 is a monitoring plugin for Icinga/Nagios and it's forks, which is 
+check_rhv is a monitoring plugin for Icinga/Nagios and it's forks, which is 
 used to monitor datacenters, clusters, hosts, vms, vm pools and storage domains 
 of Red Hat Enterprise Virtualization (RHEV) and oVirt virtualization environments.
 
-Download this plugin from: https://github.com/ovido/check_rhev3/releases/check_rhev3-1.6
+Download this plugin from: https://github.com/rk-it-at/check_rhv/releases/check_rhv-2.0
   
 For further information on how to install this plugin visit:
-  https://github.com/ovido/check_rhev3/wiki/Installation-Documentation
+  https://github.com/rk-it-at/check_rhv/wiki/Installation-Documentation
   
 A detailed usage documentation can be found here:  
-https://github.com/ovido/check_rhev3/wiki/Usage-Documentation
+https://github.com/rk-it-at/check_rhv/wiki/Usage-Documentation
 
 
 Changelog:
 
-- New features:
--   Add support for oVirt 4 and RHEV 4 (#42)
--   Add option to ignore xml warnings (#49)
--   Components in state maintenance result in warning state now instead of critical
+New features:
+-   Dropped support for RHEV 3
+-   Support for RHV 4 and oVirt 4 with REST-APIv4
+-   new URL: https://github.com/rk-it-at/check_rhv
+-   support for Gluster volume monitoring (#2)
+-   support for Gluster brick monitoring (#2)
+-   check for available updates of RHV hosts
 
 Bugs fixed:
--   Critical/Warning thresholds for -l vms/hosts are ignored (#44)
+-   Removed monitoring of Storagedomain status (#3)
+-   Unknown interface error check if tmp file is empty (#5)
+-   Fix network errors (#6)
+-   Check RHEV Host VMs (-l vms) fails with RHEV UNKNOWN: Host ' ' not found when no vms on host
+-   VM Pool Check broken in oVirt 4.1
+-   When using '*' and option '-l usage', output is incomplete
+-   storagedomain usage calculation broken when specifing multiple storagedomains
 
 
-Please note that API path changed in RHEV 4 and oVirt 4.
-It's /ovirt-engine/api instead of /api. This plugin will still use the old path for compatibility
-reasons with older installations. If you use RHEV 4 or oVirt 4 please use option -A:
-./check_rhev3 -A "/ovirt-engine/api" ...
+Please note this plugin will only work with RHV 4.0 and newer and oVirt 4.0 and newer. Support for
+version 3.x was dropped.
 
 
 If you have any questions or ideas, please drop me an email:
 rkoch@rk-it.at.
 
-Thank you for using check_rhev3.
+Thank you for using check_rhv.

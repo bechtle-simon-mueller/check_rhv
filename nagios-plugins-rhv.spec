@@ -51,7 +51,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Fri Apr 20 2018 Rene Koch <rkoch@rk-it.at> 2.0-1
+* Fri Oct 19 2018 Rene Koch <rkoch@rk-it.at> 2.0-1
 - Initial build of renamed package nagios-plugins-rhv
 
 * Sun Nov 06 2016 Rene Koch <rkoch@rk-it.at> 1.6-1

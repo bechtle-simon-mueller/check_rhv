@@ -1,6 +1,6 @@
 <?php
 #
-# Plugin: check_rhev3
+# Plugin: check_rhv
 # Author: Rene Koch <rkoch@rk-it.at>
 # Created: 2012/08/14
 # Last update: 2015/02/07

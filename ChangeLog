@@ -1,8 +1,25 @@
 #*********************************************************#
 #                                                         #
-#    Changelog of check_rhev3 plugin for Icinga/Nagios    #
+#     Changelog of check_rhv plugin for Icinga/Nagios     #
 #                                                         #
 #*********************************************************#
+
+* 2.0 - Fri Oct 19 2018
+- New features:
+-   Dropped support for RHEV 3
+-   Support for RHV 4 and oVirt 4 with REST-APIv4
+-   new URL: https://github.com/rk-it-at/check_rhv
+-   support for Gluster volume monitoring (#2)
+-   support for Gluster brick monitoring (#2)
+-   check for available updates of RHV hosts
+- Bugs fixed:
+-   Removed monitoring of Storagedomain status (#3)
+-   Unknown interface error check if tmp file is empty (#5)
+-   Fix network errors (#6)
+-   Check RHEV Host VMs (-l vms) fails with RHEV UNKNOWN: Host ' ' not found when no vms on host
+-   VM Pool Check broken in oVirt 4.1
+-   When using '*' and option '-l usage', output is incomplete
+-   storagedomain usage calculation broken when specifing multiple storagedomains
 
 * 1.6 - Sun Nov 06 2016
 - New features:

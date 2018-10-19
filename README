@@ -48,7 +48,7 @@ To change the user and group ownership of these files use:
 --with-nagios-user=<user>
 --with-nagios-group=<group>
 
-The 'nagios-plugins-rhev3.spec' file demonstrates how to distribute check_rhv
+The 'nagios-plugins-rhv.spec' file demonstrates how to distribute check_rhv
 as an RPM package.
 
 Also make sure that the following requirements are met:
@@ -77,7 +77,7 @@ Documentation
 Short documentation on how to use this plugin.
 
 Detailed documentation can be found on the project website
-https://github.com/ovido/check_rhv.
+https://github.com/rk-it-at/check_rhv.
 
 The following checks can be performed by this plugin:
 
@@ -97,6 +97,8 @@ check_rhv -H rhevm -a admin@internal:password -C default
 check_rhv -H rhevm -a admin@internal:password -C default -l hosts
 check_rhv -H rhevm -a admin@internal:password -C default -l vms
 check_rhv -H rhevm -a admin@internal:password -C default -l networks
+check_rhv -H rhevm -a admin@internal:password -C default -l glustervolumes
+check_rhv -H rhevm -a admin@internal:password -C default -l glusterbricks
 
 Hosts
 -----
@@ -113,6 +115,7 @@ check_rhv -H rhevm -a admin@internal:password -R rhevh -l network
 check_rhv -H rhevm -a admin@internal:password -R rhevh -l network -s status
 check_rhv -H rhevm -a admin@internal:password -R rhevh -l network -s traffic
 check_rhv -H rhevm -a admin@internal:password -R rhevh -l network -s errors
+check_rhv -H rhevm -a admin@internal:password -R rhevh -l updates
 
 Storage
 -------
