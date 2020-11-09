@@ -709,15 +709,17 @@ sub check_snapshots{
     my %result = %{$rref->{'snapshot'}};
     print "[D] check_snapshots: \%result: " if $o_verbose == 3; print Dumper(%result) if $o_verbose == 3;
     print "[D] check_snapshots: Looping through \%result\n" if $o_verbose == 3;
-    foreach my $value (keys %result){
-      my %snapshot = %{$result{$value}} ;
-      next if ( $snapshot{'snapshot_type'} eq 'active' ) ;
-      my $dt = DateTime::Format::DateParse->parse_datetime($snapshot{'date'});
-      my $td = int(( time() - $dt->epoch ) / 60 / 60 / 24 );
-      $max_td = $td if ($td > $max_td ) ;
-      $warning ++ if ( $td >= $o_warn ) ;
-      $critical ++ if ( $td >= $o_crit ) ;
-      $num ++ ;
+    # check if there is only Active VM
+    if ( ! defined ($result{'snapshot_type'})) {
+      foreach my $value (keys %result){
+        my %snapshot = %{$result{$value}} ;
+        my $dt = DateTime::Format::DateParse->parse_datetime($snapshot{'date'});
+        my $td = int(( time() - $dt->epoch ) / 60 / 60 / 24 );
+        $max_td = $td if ($td > $max_td ) ;
+        $warning ++ if ( $td >= $o_warn ) ;
+        $critical ++ if ( $td >= $o_crit ) ;
+        $num ++ ;
+      }
     }
   }
 #  print "[D] check_snapshots: Variable \$state: $state.\n" if $o_verbose == 3;
