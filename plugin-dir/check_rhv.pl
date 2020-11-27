@@ -713,6 +713,7 @@ sub check_snapshots{
     if ( ! defined ($result{'snapshot_type'})) {
       foreach my $value (keys %result){
         my %snapshot = %{$result{$value}} ;
+        next if ( $snapshot{'description'} eq "Active VM" ) ;
         my $dt = DateTime::Format::DateParse->parse_datetime($snapshot{'date'});
         my $td = int(( time() - $dt->epoch ) / 60 / 60 / 24 );
         $max_td = $td if ($td > $max_td ) ;
