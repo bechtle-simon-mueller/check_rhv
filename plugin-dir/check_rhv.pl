@@ -37,6 +37,8 @@ use HTTP::Request::Common qw(POST);
 use HTTP::Headers;
 use Getopt::Long;
 use XML::Simple;
+use DateTime;
+use DateTime::Format::DateParse ;
 
 # for debugging only
 use Data::Dumper;
@@ -544,6 +546,7 @@ sub check_storage{
   # is check given?
   if (defined $o_check){
     check_statistics("storage_domains",$o_rhev_storage,"storage") if $o_check eq "usage";
+    check_istatus("storage_domains",$o_rhev_storage,"disksnapshots") if $o_check eq "snapshots";
     print_unknown("storagedomains");
   }else{    
     print "[V] Storage: No check is specified, checking storage usage.\n" if $o_verbose >= 2; 
@@ -567,6 +570,7 @@ sub check_vm{
     check_cstatus("vms","$o_rhev_vm") if $o_check eq "status";
     check_statistics("vms","$o_rhev_vm","cpu") if $o_check eq "cpu";
     check_statistics("vms","$o_rhev_vm","memory") if $o_check eq "memory";
+    check_snapshots("vms","$o_rhev_vm","snapshots") if $o_check eq "snapshots";
     if ($o_check eq "network"){
       if (defined $o_subcheck){
         check_statistics("vms","$o_rhev_vm","traffic") if $o_subcheck eq "traffic";
@@ -663,6 +667,81 @@ sub check_vmpool_usage{
   print_notfound("VM Pool", $o_rhev_vmpool);
 }
 
+#***************************************************#
+#  Check too old snapshots                          #
+#---------------------------------------------------#
+#  Check the age of vm's snapshots 		    #
+#  ARG1: component to check                         #
+#  ARG2: search string                              #
+#  ARG3: subcheck                                   #
+#***************************************************#
+
+sub check_snapshots{
+  print "[D] check_snapshots: Called function check_snapshots.\n" if $o_verbose == 3;
+  print "[V] Status: Checking status of $_[0].\n" if $o_verbose >= 2;
+  my $component = $_[0];
+  my $search    = $_[1];
+  my $subcheck  = $_[2];
+  print "[D] check_snapshots: Input parameter \$component: $component\n" if $o_verbose == 3;
+  print "[D] check_snapshots: Input parameter \$search: $search\n" if $o_verbose == 3;
+  print "[D] check_snapshots: Input parameter \$subcheck: $subcheck\n" if $o_verbose == 3;
+  print "[D] check_snapshots: Converting variables.\n" if $o_verbose == 3;
+  my $url   = $component;
+  $url =~ s/_//g;
+  print "[D] check_snapshots: Converted variable \$url: $url\n" if $o_verbose == 3;
+  # get datacenter or cluster id
+  my $iref = undef;
+  $iref = get_result("/$url?search=name%3D$search",$component,"id");
+  my %id = %{ $iref };
+  print "[D] check_snapshots: \%id: " if $o_verbose == 3; print Dumper(%id) if $o_verbose == 3;
+  my $size = 0;
+  my $num   = 0;
+  my $state = undef;
+  # for hosts the network status can be found under nics not under networks
+  print "[D] check_snapshots: Looping through \%id\n" if $o_verbose == 3;
+  my $warning = 0;
+  my $critical = 0;
+  my $max_td = 0;
+  foreach my $key (keys %id){
+    print "[V] Status: $key: $id{ $key }\n" if $o_verbose >= 2;
+    # REST-API call - get snapshots info
+    my $rref = rhev_connect("/$url/$id{ $key }/$subcheck");
+    my %result = %{$rref->{'snapshot'}};
+    print "[D] check_snapshots: \%result: " if $o_verbose == 3; print Dumper(%result) if $o_verbose == 3;
+    print "[D] check_snapshots: Looping through \%result\n" if $o_verbose == 3;
+    # check if there is only Active VM
+    if ( ! defined ($result{'snapshot_type'})) {
+      foreach my $value (keys %result){
+        my %snapshot = %{$result{$value}} ;
+        next if ( $snapshot{'description'} eq "Active VM" ) ;
+        my $dt = DateTime::Format::DateParse->parse_datetime($snapshot{'date'});
+        my $td = int(( time() - $dt->epoch ) / 60 / 60 / 24 );
+        $max_td = $td if ($td > $max_td ) ;
+        $warning ++ if ( $td >= $o_warn ) ;
+        $critical ++ if ( $td >= $o_crit ) ;
+        $num ++ ;
+      }
+    }
+  }
+#  print "[D] check_snapshots: Variable \$state: $state.\n" if $o_verbose == 3;
+  print "[V] Eval Status: warning value: $o_warn.\n" if $o_verbose >= 2;
+  print "[V] Eval Status: critical value: $o_crit.\n" if $o_verbose >= 2;
+
+  my $perf = undef;
+  if ($perfdata == 1){
+    $perf = "|$subcheck age=$max_td;$o_warn;$o_crit;0;";
+    print "[V] Eval Status: Performance data: $perf.\n" if $o_verbose >= 2;
+  }else{
+    $perf = "";
+  }
+  if ( $critical ) {
+    exit_plugin('critical',ucfirst($subcheck),"$critical/$num " . ucfirst($subcheck) . " too old" . $perf) ;
+  } elsif ( $warning ) {
+    exit_plugin('warning',ucfirst($subcheck),"$warning/$num " . ucfirst($subcheck) . " too old" . $perf) if ( $warning ) ;
+  } else {
+    exit_plugin('ok',ucfirst($subcheck),"0/$num " . ucfirst($subcheck) . " too old" . $perf);
+  }
+}
 
 #***************************************************#
 #  Status check                                     #
@@ -856,6 +935,7 @@ sub check_istatus{
           $ok++ if $result{$value}{$val}{status} eq "active";        # storagedomain
           $ok++ if $result{$value}{$val}{status} eq "operational";   # network
           $ok++ if $result{$value}{$val}{status} eq "up";        # nics
+          $ok++ if $subcheck eq "disksnapshots";
           print "[V] Status: Value of $val: $result{$value}{$val}{status}.\n" if $o_verbose >= 2;
         }
       }else{
@@ -878,11 +958,13 @@ sub check_istatus{
         $ok++ if $result{$value}{status} eq "active";        # storagedomain
         $ok++ if $result{$value}{status} eq "operational";   # network
         $ok++ if $result{$value}{status} eq "up";        # nics
+        $ok++ if $subcheck eq "disksnapshots";
         print "[V] Status: Value of $result{$value}{name}: $result{$value}{status}\n" if $o_verbose >= 2;
       }
     }
     print "[V] Status: $ok/$size " . ucfirst($subcheck) . " in Cluster $key OK\n" if $o_verbose >= 2;
   }
+  $size=0 if $subcheck eq "disksnapshots";
   my $state = undef;
   if ($subcheck eq "networks"){ $state = "Operational"; }else{ $state = "Active"; }
   $o_warn = $size unless defined $o_warn;
@@ -898,12 +980,22 @@ sub check_istatus{
   }else{ 
     $perf = ""; 
   }
-  if ( ( ($ok == $size) && ($size != 0) ) || ( ($ok > $o_warn) && ($ok > $o_crit) ) ){
-    exit_plugin('ok',ucfirst($subcheck),"$ok/$size " . ucfirst($subcheck) . " with state $state" . $perf);
-  }elsif ($ok > $o_crit){
-    exit_plugin('warning',ucfirst($subcheck),"$ok/$size " . ucfirst($subcheck) . " with state $state" . $perf);
-  }else{
-    exit_plugin('critical',ucfirst($subcheck),"$ok/$size " . ucfirst($subcheck) . " with state $state" . $perf);
+  if ( $subcheck eq "disksnapshots" ) {
+    if ( ($ok == $size ) || ( ($ok < $o_warn) && ($ok < $o_crit) ) ){
+      exit_plugin('ok',ucfirst($subcheck),"$ok/$size " . ucfirst($subcheck) . " with state $state" . $perf);
+    }elsif ($ok < $o_crit){
+      exit_plugin('warning',ucfirst($subcheck),"$ok/$size " . ucfirst($subcheck) . " with state $state" . $perf);
+    }else{
+      exit_plugin('critical',ucfirst($subcheck),"$ok/$size " . ucfirst($subcheck) . " with state $state" . $perf);
+    }
+  } else {
+    if ( ( ($ok == $size) && ($size != 0) ) || ( ($ok > $o_warn) && ($ok > $o_crit) ) ){
+      exit_plugin('ok',ucfirst($subcheck),"$ok/$size " . ucfirst($subcheck) . " with state $state" . $perf);
+    }elsif ($ok > $o_crit){
+      exit_plugin('warning',ucfirst($subcheck),"$ok/$size " . ucfirst($subcheck) . " with state $state" . $perf);
+    }else{
+      exit_plugin('critical',ucfirst($subcheck),"$ok/$size " . ucfirst($subcheck) . " with state $state" . $perf);
+    }
   }
 }
 
@@ -947,6 +1039,7 @@ sub check_statistics{
      $subcheck = "nics" if $statistics eq "traffic";
      $subcheck = "nics" if $statistics eq "errors";
      $subcheck = ""     if $statistics eq "storage";
+     $subcheck = "snapshots"     if $statistics eq "snapshots";
      $subcheck = "storagedomains" if $statistics eq "dcstorage";
      $subcheck = "storagedomains" if $statistics eq "ovstorage";
      $statistics = "storage" if $statistics eq "dcstorage"; # we can use "normal" storage domain behavior now
