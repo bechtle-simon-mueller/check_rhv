@@ -120,7 +120,6 @@ check_rhv -H rhevm -a admin@internal:password -R rhevh -l updates
 Storage
 -------
 check_rhv -H rhevm -a admin@internal:password -S storage
-check_rhv -H rhevm -a admin@internal:password -S storage -l status
 check_rhv -H rhevm -a admin@internal:password -S storage -l usage
 
 VMs
