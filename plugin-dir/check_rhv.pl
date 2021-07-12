@@ -37,6 +37,8 @@ use HTTP::Request::Common qw(POST);
 use HTTP::Headers;
 use Getopt::Long;
 use XML::Simple;
+$XML::Simple::PREFERRED_PARSER = 'XML::Parser';
+
 use DateTime;
 use DateTime::Format::DateParse ;
 
