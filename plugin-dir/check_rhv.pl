@@ -1200,7 +1200,7 @@ sub check_statistics{
         # loop through hash if stats are given
         foreach my $stat (keys %{ $rethash{ $key }{stats} }){
           $stat .= "_" . $key if $statistics eq "storage";
-          $perf .= "$stat=$rethash{$key}{stats}{$stat};;;0; ";
+          $perf .= "$stat=$rethash{$key}{stats}{$stat};;;0; " if defined $rethash{$key}{stats}{$stat};
         }
         print "[V] Statistics: Performance data: $perf.\n" if $o_verbose >= 2;
       }else{
