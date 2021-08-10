@@ -82,6 +82,7 @@ my $o_rhev_host    = undef;   # rhev host
 my $o_rhev_storage = undef;   # rhev storage domain
 my $o_rhev_vm      = undef;   # rhev vm
 my $o_rhev_vmpool  = undef;   # rhev vm pool
+my $o_exclude      = undef;   # exclude storage pattern
 my $o_check        = undef;
 my $o_subcheck     = undef;
 my $o_ignore_xml_warn = undef;
@@ -117,6 +118,7 @@ sub parse_options(){
     'M:s'   => \$o_rhev_vm,     'vm:s'       => \$o_rhev_vm,
     'P:s'   => \$o_rhev_vmpool, 'vmpool:s'   => \$o_rhev_vmpool,
     'l:s'   => \$o_check,       'check:s'    => \$o_check,
+    'e:s'   => \$o_exclude,     'exclude:s'    => \$o_exclude,
     's:s'   => \$o_subcheck,    'subcheck:s' => \$o_subcheck,
     'w:s'   => \$o_warn,        'warning:s'  => \$o_warn,
     'c:s'   => \$o_crit,        'critical:s' => \$o_crit,
@@ -1420,8 +1422,9 @@ sub get_stats {
       }
       # loop through storage domains
       foreach my $storage (keys %storage_domain){
-           $storage_domain{ $storage }{ 'usage' }     = sprintf("%.2f", $storage_domain{ $storage }{ 'used' } / ($storage_domain{ $storage }{ 'used' } + $storage_domain{ $storage }{ 'available' }) * 100) if defined $storage_domain{ $storage }{ 'available' };
-           $storage_domain{ $storage }{ 'usage' }     = -1 if ! defined $storage_domain{ $storage }{ 'available' };
+        next if defined $o_exclude &&  $o_exclude =~ m/$storage/;
+        $storage_domain{ $storage }{ 'usage' }     = sprintf("%.2f", $storage_domain{ $storage }{ 'used' } / ($storage_domain{ $storage }{ 'used' } + $storage_domain{ $storage }{ 'available' }) * 100) if defined $storage_domain{ $storage }{ 'available' };
+        $storage_domain{ $storage }{ 'usage' }     = -1 if ! defined $storage_domain{ $storage }{ 'available' };
         $rethash{ $storage }{ 'usage' } = $storage_domain{ $storage }{ 'usage' };
         $rethash{ $storage }{ 'usageBytes' } = $storage_domain{ $storage }{ 'used' };
         # set default values for warning and critical
