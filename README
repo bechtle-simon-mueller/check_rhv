@@ -30,6 +30,17 @@ Installation
 The check_rhv installation can be used by following the standard autotools
 installation process, documented in the INSTALL file. As a quick start you can do
 
+
+NOTE: Deploy the dependencies below for the system version you have here, first
+For RHEL 7/8 or Fedora 35 run in this order (cwd is the check_rhv repo path)
+$ /usr/bin/aclocal
+$ automake --add-missing
+$ autoconf
+$ ./configure
+$ make all
+$ sudo make install
+
+For other systems, use the standard method of deploying
 $ ./configure
 $ make all
 # make install
@@ -54,10 +65,14 @@ as an RPM package.
 Also make sure that the following requirements are met:
 Perl
 Perl-Modules:
-  LWP::UserAgent
-  perl-Crypt-SSLeay
-  HTTP::Request
+  Crypt::SSLeay
+  DateTime
+  DateTime::Format::DateParse
   Getopt::Long
+  HTTP::Request
+  LWP
+  LWP::Protocol:https
+  LWP::UserAgent
   XML:Simple
 
 For Fedora 19 (and newer) install the following packages:
@@ -67,9 +82,14 @@ For Fedora 19 (and newer) install the following packages:
 For RHEL 6 install the following packages:
 # yum install perl-Crypt-SSLeay perl-libwww-perl perl-XML-Simple
 
+For RHEL 7 install the following packages:
+$ sudo yum install perl-LWP-Protocol-https openssl perl-DateTime-Format-DateParse.noarch perl-DateTime autoconf-archive.noarch automake libtool perl-libwww-perl autoconf perl-XML-Simple.noarch 
+
 For Debian Squeeze install the following packages:
 # apt-get install libwww-perl libcrypt-ssleay-perl libxml-simple-perl
 
+For Fedora 35 or RHEL 8, install the following packages:
+$ sudo dnf install perl-LWP-Protocol-https openssl perl-DateTime-Format-DateParse.noarch perl-DateTime autoconf-archive.noarch automake libtool perl-libwww-perl autoconf perl-XML-Simple.noarch
 
 Documentation
 =============
