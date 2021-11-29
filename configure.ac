@@ -32,12 +32,12 @@ AC_CANONICAL_HOST
 
 # Check for programs
 AC_PATH_PROG([PERL],[perl])
-AC_PROG_PERL_MODULES( LWP::UserAgent, , AC_MSG_ERROR(Missing Perl module LWP::UserAgent))
-AC_PROG_PERL_MODULES( HTTP::Request, , AC_MSG_ERROR(Missing Perl module HTTP::Request))
-AC_PROG_PERL_MODULES( HTTP::Request::Common, , AC_MSG_ERROR(Missing Perl module HTTP::Request::Common))
-AC_PROG_PERL_MODULES( Getopt::Long, , AC_MSG_ERROR(Missing Perl module Getopt::Long))
-AC_PROG_PERL_MODULES( XML::Simple, , AC_MSG_ERROR(Missing Perl module XML::Simple))
-AC_PROG_PERL_MODULES( Data::Dumper, , AC_MSG_ERROR(Missing Perl module Data::Dumper))
+AX_PROG_PERL_MODULES( LWP::UserAgent, , AC_MSG_ERROR(Missing Perl module LWP::UserAgent))
+AX_PROG_PERL_MODULES( HTTP::Request, , AC_MSG_ERROR(Missing Perl module HTTP::Request))
+AX_PROG_PERL_MODULES( HTTP::Request::Common, , AC_MSG_ERROR(Missing Perl module HTTP::Request::Common))
+AX_PROG_PERL_MODULES( Getopt::Long, , AC_MSG_ERROR(Missing Perl module Getopt::Long))
+AX_PROG_PERL_MODULES( XML::Simple, , AC_MSG_ERROR(Missing Perl module XML::Simple))
+AX_PROG_PERL_MODULES( Data::Dumper, , AC_MSG_ERROR(Missing Perl module Data::Dumper))
 
 # Options
 AC_ARG_WITH(nagios_user,AC_HELP_STRING([--with-nagios-user=<user>],[sets user name to run Nagios]),nagios_user=$withval,nagios_user=nagios)
